@@ -1,0 +1,6 @@
+walkingOnes
+walkingZeros
+walkingOnesZeros
+walkingOnes456
+walkingZeros456
+walkingOnesZeros456
