@@ -4,4 +4,6 @@
 *.dylib
 
 .DS_Store
-.swp
+*.swp
+*~
+CVS
