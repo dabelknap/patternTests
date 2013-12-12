@@ -1,24 +1,3 @@
-#!/bin/bash
-
-### Make a congif file for a particular pattern  ###
-
-ARGS=2
-EXIT_BADARGS=64
-if [ $# -ne "$ARGS" ]
-#if [ true ]
-then
-	echo "need to include a pattern name or .txt file and region sums True/False"
-	exit $EXIT_BADARGS
-fi
-patternName=$1
-#DIRECTORY=/afs/cern.ch/user/g/grogg/public/CMSSW_2_1_4/src/UserCode/grogg/src/patternTest/data/$patternName
-DIRECTORY=data/$patternName
-if [[ ! -d "${DIRECTORY}" ]]; then    
-    echo "directory for this pattern doesn't exit yet; will make one"
-    mkdir data/$patternName
-fi
-
-cat <<EOF > 'rctPattern_cfg.py'
 import FWCore.ParameterSet.Config as cms
 
 process = cms.Process("TEST")
@@ -108,7 +87,7 @@ process.htr_xml = cms.EDFilter("HtrXmlPattern",
 
     write_root_file = cms.untracked.bool(True),
     XML_file_mode = cms.untracked.int32(3), #0=no-output; 1=one-file; 2=one-file-per-crate; 3=one-file-per-fiber
-    file_tag = cms.untracked.string('$1'),
+    file_tag = cms.untracked.string('tplf'),
     user_output_directory = cms.untracked.string('/tmp/grogg'),
 
     fill_by_hand = cms.untracked.bool(False),
@@ -120,8 +99,8 @@ process.RCTConfigProducers.jetMETLSB = 1
 process.rctDigis.ecalDigisLabel = 'rctPattern'
 process.rctDigis.hcalDigisLabel = 'rctPattern'
 process.rctDigis.useDebugTpgScales = True
-process.L1RCTTestAnalyzer.showRegionSums = True #$2
-process.L1RCTTestAnalyzer.testName = '$1'
+process.L1RCTTestAnalyzer.showRegionSums = True #True
+process.L1RCTTestAnalyzer.testName = 'tplf'
 process.l1CaloScales.L1CaloEmEtScaleLSB = 1
 process.CaloTPGTranscoder.hcalLUT2 = 'TPGcalcDecompress2Identity.txt'
 process.EcalTrigPrimESProducer.DatabaseFile = 'TPG_RCT_identity-21X.txt'
@@ -138,8 +117,8 @@ process.rctPattern = cms.EDProducer("L1RCTPatternProducer",
     randomPercent = cms.untracked.int32(35),
     randomSeed = cms.untracked.int32(12345),
     rctTestInputFile = cms.untracked.string('rctInput'),
-    testName = cms.untracked.string('$1'),
-    regionSums = cms.untracked.bool(True)  #$2)
+    testName = cms.untracked.string('tplf'),
+    regionSums = cms.untracked.bool(True)  #True)
 )
 
 #maybe not
@@ -171,6 +150,5 @@ process.ecalSimRawData.tcpDigiCollection = '' # 'rctPattern' #'formatTCP'  #
 process.ecalSimRawData.tpVerbose = False
 process.ecalSimRawData.tccInDefaultVal = 0
 process.ecalSimRawData.tccNum = -1
-process.ecalSimRawData.outputBaseName = 'data/$1/ecal'
+process.ecalSimRawData.outputBaseName = 'data/tplf/ecal'
 
-EOF

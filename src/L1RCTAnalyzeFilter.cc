@@ -13,7 +13,7 @@
 //
 // Original Author:  Kira Suzanne Grogg
 //         Created:  Wed Apr 16 13:51:56 CEST 2008
-// $Id$
+// $Id: L1RCTAnalyzeFilter.cc,v 1.1 2009/02/12 13:24:43 grogg Exp $
 //
 //
 

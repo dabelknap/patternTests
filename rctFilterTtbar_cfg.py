@@ -83,17 +83,19 @@ process.htr_xml.hand_pattern_number = 1
 process.htr_xml.file_tag = 'ttbar'
 
 
-process.RCTConfigProducers.eGammaLSB = 1
-process.RCTConfigProducers.jetMETLSB = 1
+#process.RCTConfigProducers.eGammaLSB = 1
+#process.RCTConfigProducers.jetMETLSB = 1
 process.rctDigis.ecalDigisLabel = 'simEcalTriggerPrimitiveDigis'
 process.rctDigis.hcalDigisLabel = 'simHcalTriggerPrimitiveDigis' #hcalTriggerPrimitiveDigis'
-process.rctDigis.useDebugTpgScales = True
+#process.rctDigis.useDebugTpgScales = True
 process.L1RCTTestAnalyzer.showRegionSums = True
 process.L1RCTTestAnalyzer.limitTo64 = True
 process.L1RCTTestAnalyzer.testName = 'ttbar'
 process.l1CaloScales.L1CaloEmEtScaleLSB = 1
 process.CaloTPGTranscoder.hcalLUT2 = 'TPGcalcDecompress2Identity.txt'
 process.EcalTrigPrimESProducer.DatabaseFile = 'TPG_RCT_identity-21X.txt'
+
+process.load("L1TriggerConfig.RCTConfigProducers.Rct-EEG_EHSUMS_TAU3_DECO_25_CRAFT1_cff")
 
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(349)
@@ -102,7 +104,7 @@ process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
 #    '/store/relval/CMSSW_2_1_4/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG-RECO/STARTUP_V5_v1/0004/0067EE3B-7D6C-DD11-8CFD-000423D99896.root', #ttbar19
 #        '/store/relval/CMSSW_2_1_4/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG-RECO/STARTUP_V5_v1/0004/06D212C3-7E6C-DD11-AF46-000423D98EC4.root', #ttbar20
-#        '/store/relval/CMSSW_2_1_4/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG-RECO/STARTUP_V5_v1/0004/186AD7AA-7D6C-DD11-9A25-000423D991F0.root', #21
+        '/store/relval/CMSSW_2_1_4/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG-RECO/STARTUP_V5_v1/0004/186AD7AA-7D6C-DD11-9A25-000423D991F0.root', #21
 #        '/store/relval/CMSSW_2_1_4/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG-RECO/STARTUP_V5_v1/0004/34BC69E1-7D6C-DD11-9403-000423D9517C.root', #22
 #        '/store/relval/CMSSW_2_1_4/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG-RECO/STARTUP_V5_v1/0004/42C24772-7D6C-DD11-A37B-001617E30E28.root',#23
 #    '/store/relval/CMSSW_2_1_4/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG-RECO/STARTUP_V5_v1/0004/4C56909F-7D6C-DD11-8437-001617E30F50.root',#24
@@ -110,7 +112,7 @@ process.source = cms.Source("PoolSource",
 #        '/store/relval/CMSSW_2_1_4/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG-RECO/STARTUP_V5_v1/0004/60D93067-7E6C-DD11-AED8-000423D9517C.root',#26
 #        '/store/relval/CMSSW_2_1_4/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG-RECO/STARTUP_V5_v1/0004/68D80573-7D6C-DD11-992E-001617DBD332.root', #27
 #        '/store/relval/CMSSW_2_1_4/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG-RECO/STARTUP_V5_v1/0004/6AE79D69-7E6C-DD11-9F97-000423D98834.root',#28
-        '/store/relval/CMSSW_2_1_4/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG-RECO/STARTUP_V5_v1/0004/70E53943-7D6C-DD11-AFBA-000423D94990.root',#29
+#        '/store/relval/CMSSW_2_1_4/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG-RECO/STARTUP_V5_v1/0004/70E53943-7D6C-DD11-AFBA-000423D94990.root',#29
         '/store/relval/CMSSW_2_1_4/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG-RECO/STARTUP_V5_v1/0004/747D2CAA-7D6C-DD11-B385-001617C3B64C.root',
         '/store/relval/CMSSW_2_1_4/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG-RECO/STARTUP_V5_v1/0004/7CC22405-7E6C-DD11-971F-001617DBD472.root',
         '/store/relval/CMSSW_2_1_4/RelValTTbar/GEN-SIM-DIGI-RAW-HLTDEBUG-RECO/STARTUP_V5_v1/0004/828F1371-7D6C-DD11-858E-000423D94E1C.root',
@@ -156,8 +158,8 @@ process.FEVT = cms.OutputModule("PoolOutputModule",
         # crateNumber is the card where there is energy required
         # particle ID value is the pythia number. Using 999 allows any particle
 process.input = cms.Path(process.rctDigis)
-process.p = cms.Path(process.filter*process.rctSaveInput*process.L1RCTTestAnalyzer)
-#* process.ecalSimRawData * process.htr_xml
+process.p = cms.Path(process.filter*process.rctSaveInput*process.L1RCTTestAnalyzer)#
+#* process.ecalSimRawData * process.htr_xml)
 #process.outpath = cms.EndPath(process.FEVT)
 process.schedule = cms.Schedule(process.input,process.p)
 

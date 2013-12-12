@@ -19,9 +19,13 @@ if [[ $1 == *.txt ]]
       read line || break
       sh makePatternConfig.sh $line $regSum ; 
       echo "running pattern $line" 
-      cmsRun rctPattern_cfg.py >& log; 
-      mv $line\Input.txt ~/scratch0/; 
-      mv $line.txt ~/scratch0/;
+      cmsRun rctPattern_cfg.py >& pattern.log; 
+      if [ -e  $line\Input.txt ]; then
+	  mv $line\Input.txt ~/scratch0/; 
+	  mv $line.txt ~/scratch0/;
+      else
+	  echo "Files not made, pattern making unsuccessful, check pattern.log file"
+      fi
     done < $myFile
 else
     line=$1
@@ -40,16 +44,24 @@ else
 	    for ((num=30; num<$maxRandom; num++)); do
 		
 		sh makePatternConfig.sh $line $regSum ; 
-		cmsRun rctPattern_cfg.py >& log; 
-		mv $line\Input.txt ~/scratch0/${line}${num}Input.txt; 
-		mv $line.txt ~/scratch0/${line}${num}.txt;
+		cmsRun rctPattern_cfg.py >& pattern.log; 
+		if [ -e  $line\Input.txt ]; then
+		    mv $line\Input.txt ~/scratch0/${line}${num}Input.txt; 
+		    mv $line.txt ~/scratch0/${line}${num}.txt;
+		else
+		    echo "Files not made, pattern making unsuccessful, check pattern.log file"
+		fi
 	    done
 	else
 	    sh makePatternConfig.sh $line $regSum ;
 	    echo "running pattern $line" 
-	    cmsRun rctPattern_cfg.py >& log;
-	    mv $line\Input.txt ~/scratch0/${line}Input.txt;
-	    mv $line.txt ~/scratch0/${line}.txt;
+	    cmsRun rctPattern_cfg.py >& pattern.log;
+	    if [ -e  $line\Input.txt ]; then
+		mv $line\Input.txt ~/scratch0/${line}Input.txt;
+		mv $line.txt ~/scratch0/${line}.txt;
+	    else
+		echo "Files not made, pattern making unsuccessful, check pattern.log file"
+	    fi
 	fi
 	else
 	echo "NOT A REAL PATTERN TEST";
