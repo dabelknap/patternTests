@@ -1,12 +1,12 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Framework/interface/EDFilter.h"
 #include "FWCore/Framework/interface/Event.h"
+#include "FWCore/Framework/interface/Event.h"
+#include "DataFormats/Common/interface/Handle.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
-#include "FWCore/Framework/interface/Handle.h"
-#include "FWCore/Framework/interface/ESHandle.h"
-#include "FWCore/Framework/interface/EventSetup.h"
 #include "DataFormats/CaloTowers/interface/CaloTowerCollection.h"
 #include <vector>
+#include "FWCore/Framework/interface/MakerMacros.h"
 
   class L1RCTFilter : public edm::EDFilter
   {

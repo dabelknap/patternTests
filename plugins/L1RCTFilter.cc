@@ -15,15 +15,14 @@
  *
  *************************************************************************/
 
-#include "DQM/RCTMonitor/src/L1RCTFilter.h"
+#include "CTP7Tests/CreateRCTPatternsMC/plugins/L1RCTFilter.h"
 #include "FWCore/Framework/interface/EDFilter.h"
 #include "FWCore/Framework/interface/OutputModule.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
  
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
-#include "FWCore/Framework/interface/Handle.h"
-#include "DataFormats/HepMCCandidate/interface/GenParticleCandidate.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
 #include "DataFormats/EcalDigi/interface/EcalDigiCollections.h"
 #include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
@@ -77,13 +76,13 @@ L1RCTFilter::~L1RCTFilter()
 bool L1RCTFilter::filter(edm::Event& iEvent, edm::EventSetup const&)
 {
   std::cout << "filtering..." << "particles " << particleID << std::endl;
-  edm::Handle<CandidateCollection> genParticlesHandle;
-  iEvent.getByLabel( "genParticleCandidates", genParticlesHandle);
+  edm::Handle< vector<reco::GenParticle> >genParticlesHandle;
+  iEvent.getByLabel("genParticles", genParticlesHandle);
+ 
+ 
+//  Handle<CaloTowerCollection> calotowers;
+//  iEvent.getByType(calotowers);
   
-  Handle<CaloTowerCollection> calotowers;
-  iEvent.getByType(calotowers);
-  
-  CandidateCollection genParticles = *genParticlesHandle;
   bool goodEvent = false;
   bool noEdges = true;
   
@@ -96,14 +95,6 @@ bool L1RCTFilter::filter(edm::Event& iEvent, edm::EventSetup const&)
   double etaMinMin = 5;
   double etaMaxMax = -5;
   
-  //loop over all particles in event
-  for(size_t i = 0; i < genParticles.size(); ++ i )
-    {
-      const Candidate & p = genParticles[ i ];
-      //if particle matches chosen particle ID 
-      //(or any particle if particleID is set to 999
-      if((pdgId(p)== particleID || pdgId(p) ==( -1 * particleID) || particleID== 999) && p.pt() >= pTMin)
-	{
 	  //loop over all crates to select the phi boundaries
 	  for(unsigned int i = 0; i < crateNumber.size(); i++)
 	    {
@@ -157,6 +148,21 @@ bool L1RCTFilter::filter(edm::Event& iEvent, edm::EventSetup const&)
 	      
 	      if(etaMin < etaMinMin) etaMinMin = etaMin;
 	      if(etaMax > etaMaxMax) etaMaxMax = etaMax;
+       
+            } 
+
+
+  loop over all particles in event
+    for(size_t i = 0; i < genParticlesHandle->size(); ++ i )
+        {
+              const reco::GenParticle& p = (*genParticlesHandle)[i];
+  
+                    //if particle matches chosen particle ID 
+                          //(or any particle if particleID is set to 999
+                                if((p.pdgId()== particleID || p.pdgId() ==( -1 * particleID) || particleID== 999) && p.pt() >= pTMin)
+                                        {
+  
+
 	      //check if particle is within crate
 	      if(crateNumber[i] != 6 && crateNumber[i] !=15) {
 		if((p.phi() >= phiMin && p.phi() <= phiMax) && p.eta() >= etaMin && p.eta() <= etaMax) {goodEvent = true;}
@@ -170,7 +176,7 @@ bool L1RCTFilter::filter(edm::Event& iEvent, edm::EventSetup const&)
     }
   //if energy has been found in a selected crate, check the edges
   if(goodEvent)
-    noEdges = checkEdges(phiMinMin,phiMaxMax,etaMinMin,etaMaxMax,calotowers.product());
+    noEdges = true; //checkEdges(phiMinMin,phiMaxMax,etaMinMin,etaMaxMax,calotowers.product());
   
   //if energy is in selected crates and passes edge test, then return true
   if(goodEvent && noEdges) {
@@ -267,3 +273,4 @@ bool L1RCTFilter::checkEdges(double phiMin, double phiMax, double etaMin, double
   return ret;
 }
 
+DEFINE_FWK_MODULE(L1RCTFilter);

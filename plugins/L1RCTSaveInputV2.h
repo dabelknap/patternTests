@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
-// Package:    L1RCTSaveInput
-// Class:      L1RCTSaveInput
+// Package:    L1RCTSaveInputV2
+// Class:      L1RCTSaveInputV2
 //
-/**\class L1RCTSaveInput L1RCTSaveInput.cc src/L1RCTSaveInput/src/L1RCTSaveInput.cc
+/**\class L1RCTSaveInputV2 L1RCTSaveInputV2.cc src/L1RCTSaveInputV2/src/L1RCTSaveInputV2.cc
 
  Description: Saves the input event from TPGs for loading 
               simulated events in hardware
@@ -14,7 +14,6 @@
 //
 // Original Author:  Sridhara Dasu
 //         Created:  Tue Jul 31 17:10:13 CEST 2007
-// $Id: L1RCTSaveInput.h,v 1.1 2009/02/12 13:24:44 grogg Exp $
 //
 //
 
@@ -36,11 +35,14 @@
 class L1RCTLookupTables;
 class L1RCT;
 
-class L1RCTSaveInput : public edm::EDAnalyzer {
+class L1RCTSaveInputV2 : public edm::EDAnalyzer {
 public:
-  explicit L1RCTSaveInput(const edm::ParameterSet&);
-  ~L1RCTSaveInput();
+  explicit L1RCTSaveInputV2(const edm::ParameterSet&);
+  ~L1RCTSaveInputV2();
   virtual void analyze(const edm::Event&, const edm::EventSetup&);
+  void updateFedVector(const edm::EventSetup& eventSetup, bool getFromOmds, int runNumber);
+  void updateConfiguration(const edm::EventSetup& eventSetup);
+
 private:
   std::string fileName;
   L1RCTLookupTables* rctLookupTables;

@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
-// Package:    L1RCTTestAnalyzer
-// Class:      L1RCTTestAnalyzer
+// Package:    L1RCTTestAnalyzerV2
+// Class:      L1RCTTestAnalyzerV2
 //
-/**\class L1RCTTestAnalyzer L1RCTTestAnalyzer.cc src/L1RCTTestAnalyzer/src/L1RCTTestAnalyzer.cc
+/**\class L1RCTTestAnalyzerV2 L1RCTTestAnalyzerV2.cc src/L1RCTTestAnalyzerV2/src/L1RCTTestAnalyzerV2.cc
 
  Description: <one line class summary>
 
@@ -13,7 +13,7 @@
 //
 // Original Author:  pts/47
 //         Created:  Thu Jul 13 21:38:08 CEST 2006
-// $Id: L1RCTTestAnalyzer.h,v 1.1 2009/02/12 13:24:44 grogg Exp $
+// $Id: L1RCTTestAnalyzerV2.h,v 1.1 2009/02/12 13:24:44 grogg Exp $
 //
 //
 
@@ -45,10 +45,10 @@
 // class declaration
 //
 
-class L1RCTTestAnalyzer : public edm::EDAnalyzer {
+class L1RCTTestAnalyzerV2 : public edm::EDAnalyzer {
 public:
-  explicit L1RCTTestAnalyzer(const edm::ParameterSet&);
-  ~L1RCTTestAnalyzer();
+  explicit L1RCTTestAnalyzerV2(const edm::ParameterSet&);
+  ~L1RCTTestAnalyzerV2();
   
   
   virtual void analyze(const edm::Event&, const edm::EventSetup&);

@@ -23,6 +23,7 @@
 
 #include "DataFormats/Common/interface/Handle.h"
 
+
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/EDProducer.h"
@@ -75,6 +76,8 @@ private:
   virtual void produce(edm::Event&, const edm::EventSetup&);
   virtual void endJob() {}
 
+  void updateFedVector(const edm::EventSetup& eventSetup, bool getFromOmds, int runNumber);
+  void updateConfiguration(const edm::EventSetup& eventSetup);
   void firstEvent(unsigned short iCrate, unsigned short iCard,unsigned short iTower);
   void walkHCAL(int nEvents, unsigned short iCard,unsigned short iTower);
   void walkZeroHCAL(int nEvents, unsigned short iCard,unsigned short iTower);

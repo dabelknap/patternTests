@@ -15,7 +15,7 @@
 
 #include "DataFormats/L1CaloTrigger/interface/L1CaloCollections.h"
 
-#include "L1Trigger/RegionalCaloTrigger/interface/L1RCTTestAnalyzer.h"
+#include "CTP7Tests/CreateRCTPatternsMC/plugins/L1RCTTestAnalyzerV2.h"
 
 using std::string;
 using std::cout;
@@ -24,7 +24,7 @@ using std::endl;
 //
 // constructors and destructor
 //
-L1RCTTestAnalyzer::L1RCTTestAnalyzer(const edm::ParameterSet& iConfig) :
+L1RCTTestAnalyzerV2::L1RCTTestAnalyzerV2(const edm::ParameterSet& iConfig) :
   showEmCands(iConfig.getUntrackedParameter<bool>("showEmCands",true)),
   showRegionSums(iConfig.getUntrackedParameter<bool>("showRegionSums",true)),
   limitTo64(iConfig.getUntrackedParameter<bool>("limitTo64",false)),
@@ -83,7 +83,7 @@ L1RCTTestAnalyzer::L1RCTTestAnalyzer(const edm::ParameterSet& iConfig) :
 }
 
 
-L1RCTTestAnalyzer::~L1RCTTestAnalyzer()
+L1RCTTestAnalyzerV2::~L1RCTTestAnalyzerV2()
 {
 
    // do anything here that needs to be done at destruction time
@@ -98,7 +98,7 @@ L1RCTTestAnalyzer::~L1RCTTestAnalyzer()
 
 // ------------ method called to produce the data  ------------
 void
-L1RCTTestAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
+L1RCTTestAnalyzerV2::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   //cout << "testAnalyzer analyze" << endl;
    using namespace edm;
@@ -112,7 +112,7 @@ L1RCTTestAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
    iSetup.get<SetupRecord>().get(pSetup);
 #endif
 
-   // as in L1GctTestAnalyzer.cc
+   // as in L1GctTestAnalyzerV2.cc
    Handle<L1CaloEmCollection> rctEmCands;
    Handle<L1CaloRegionCollection> rctRegions;
    Handle<EcalTrigPrimDigiCollection> ecalColl;
@@ -312,4 +312,7 @@ L1RCTTestAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	 }
      }
 }
+
+#include "FWCore/Framework/interface/MakerMacros.h"
+DEFINE_FWK_MODULE(L1RCTTestAnalyzerV2);
 
