@@ -58,7 +58,8 @@ L1RCTFilter::L1RCTFilter(const edm::ParameterSet& ps) :
  vector<int> defpid1;
    defpid1.push_back(0);
   crateNumber=ps.getUntrackedParameter< vector<int> >("crateNumber",defpid1);
-    cout << "filter!" << endl;
+    cout << "filter!" << crateNumber[0]<<endl;
+    if(crateNumber.size()!=1) cout << "Caution, the code right now is setup only for 1 crate!"<<endl;
   }
      
 L1RCTFilter::~L1RCTFilter()
@@ -94,11 +95,14 @@ bool L1RCTFilter::filter(edm::Event& iEvent, edm::EventSetup const&)
   double etaMax = 0;
   double etaMinMin = 5;
   double etaMaxMax = -5;
-  
+ 
+   
+
+ 
 	  //loop over all crates to select the phi boundaries
-	  for(unsigned int i = 0; i < crateNumber.size(); i++)
+	  for(unsigned int i = 0; i < 1; i++)
 	    {
-	      switch(crateNumber[i])
+	      switch(crateNumber[i])   // this is a bit weird, need to check (it was in a loop within the genParticles loop, but I think that's wasteful - changing)
 		{
 		case 0: phiMin = 0.8727 ; phiMax = 1.5708; 
 		  break;
@@ -137,7 +141,6 @@ bool L1RCTFilter::filter(edm::Event& iEvent, edm::EventSetup const&)
 		case 17: phiMin = 1.5708; phiMax = 2.2689; 
 		  break;
 		}
-	      
 	      //set min/max eta
 	      if(crateNumber[i] <9) {
 		etaMin = -5; etaMax = 0; 
@@ -149,10 +152,10 @@ bool L1RCTFilter::filter(edm::Event& iEvent, edm::EventSetup const&)
 	      if(etaMin < etaMinMin) etaMinMin = etaMin;
 	      if(etaMax > etaMaxMax) etaMaxMax = etaMax;
        
-            } 
+              }
 
 
-  loop over all particles in event
+  //loop over all particles in event
     for(size_t i = 0; i < genParticlesHandle->size(); ++ i )
         {
               const reco::GenParticle& p = (*genParticlesHandle)[i];
@@ -164,7 +167,7 @@ bool L1RCTFilter::filter(edm::Event& iEvent, edm::EventSetup const&)
   
 
 	      //check if particle is within crate
-	      if(crateNumber[i] != 6 && crateNumber[i] !=15) {
+	      if(crateNumber[0] != 6 && crateNumber[0] !=15) {
 		if((p.phi() >= phiMin && p.phi() <= phiMax) && p.eta() >= etaMin && p.eta() <= etaMax) {goodEvent = true;}
 	      } 
 	      // for crates 6 & 15, on -180 to 180 phi border
@@ -173,7 +176,9 @@ bool L1RCTFilter::filter(edm::Event& iEvent, edm::EventSetup const&)
 	      }
 	    }
 	}
-    }
+
+
+/*  // Before enabling this I want to understand what it does
   //if energy has been found in a selected crate, check the edges
   if(goodEvent)
     noEdges = true; //checkEdges(phiMinMin,phiMaxMax,etaMinMin,etaMaxMax,calotowers.product());
@@ -184,7 +189,9 @@ bool L1RCTFilter::filter(edm::Event& iEvent, edm::EventSetup const&)
     cout << "good!" << endl;
   }
   else goodEvent = false;
-  
+*/ 
+
+ 
   return goodEvent;  
 }
 

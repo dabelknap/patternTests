@@ -10,36 +10,39 @@ using std::endl;
 
 #include <iomanip>
 
-#include "CTP7Tests/CreateRCTPatternsMC/plugins/L1RCTSaveInputV2.h" 
+#include "CTP7Tests/CreateRCTPatternsMC/plugins/L1RCTCreateInput.h" 
 #include "L1Trigger/RegionalCaloTrigger/interface/L1RCTProducer.h"
 #include "CondFormats/L1TObjects/interface/L1RCTChannelMask.h"
 #include "CondFormats/DataRecord/interface/L1RCTChannelMaskRcd.h"
 
-L1RCTSaveInputV2::L1RCTSaveInputV2(const edm::ParameterSet& conf) :
-  fileName(conf.getUntrackedParameter<std::string>("rctTestInputFile")),
-  rctLookupTables(new L1RCTLookupTables),
-  rct(new L1RCT(rctLookupTables)),
-  useEcal(conf.getParameter<bool>("useEcal")),
-  useHcal(conf.getParameter<bool>("useHcal")),
-  ecalDigisLabel(conf.getParameter<edm::InputTag>("ecalDigisLabel")),
-  hcalDigisLabel(conf.getParameter<edm::InputTag>("hcalDigisLabel")),
-  useDebugTpgScales(conf.getParameter<bool>("useDebugTpgScales"))
+L1RCTCreateInput::L1RCTCreateInput(const edm::ParameterSet& conf) :
+ fileName(conf.getUntrackedParameter<std::string>("rctTestInputFile")),
+ rctLookupTables(new L1RCTLookupTables),
+ rct(new L1RCT(rctLookupTables)),
+ useEcal(conf.getParameter<bool>("useEcal")),
+ useHcal(conf.getParameter<bool>("useHcal")),
+ ecalDigisLabel(conf.getParameter<edm::InputTag>("ecalDigisLabel")),
+ hcalDigisLabel(conf.getParameter<edm::InputTag>("hcalDigisLabel")),
+ useDebugTpgScales(conf.getParameter<bool>("useDebugTpgScales")),
+ crateNumber(conf.getParameter<std::vector<int> >("crateNumber")),
+ cardNumber(conf.getParameter<std::vector<int> >("cardNumber")),
+ includeHF(conf.getParameter<bool>("includeHF"))
 {
-  ofs.open(fileName.c_str(), std::ios::app);
-  if(!ofs)
-    {
-      std::cerr << "Could not create " << fileName << std::endl;
-      exit(1);
-    }
+ ofs.open(fileName.c_str(), std::ios::app);
+ if(!ofs)
+ {
+  std::cerr << "Could not create " << fileName << std::endl;
+  exit(1);
+ }
 }
 
-L1RCTSaveInputV2::~L1RCTSaveInputV2()
+L1RCTCreateInput::~L1RCTCreateInput()
 {
-  if(rct != 0) delete rct;
-  if(rctLookupTables != 0) delete rctLookupTables;
+ if(rct != 0) delete rct;
+ if(rctLookupTables != 0) delete rctLookupTables;
 }
 
-void L1RCTSaveInputV2::updateConfiguration(const edm::EventSetup& eventSetup)
+void L1RCTCreateInput::updateConfiguration(const edm::EventSetup& eventSetup)
 {
  // Refresh configuration information every event
  // Hopefully, this does not take too much time
@@ -75,7 +78,7 @@ void L1RCTSaveInputV2::updateConfiguration(const edm::EventSetup& eventSetup)
  rctLookupTables->setL1CaloEtScale(s);
 }
 
-void L1RCTSaveInputV2::updateFedVector(const edm::EventSetup& eventSetup, bool getFromOmds, int runNumber) // eventSetup apparently doesn't include run number: http://cmslxr.fnal.gov/lxr/source/FWCore/Framework/interface/EventSetup.h
+void L1RCTCreateInput::updateFedVector(const edm::EventSetup& eventSetup, bool getFromOmds, int runNumber) // eventSetup apparently doesn't include run number: http://cmslxr.fnal.gov/lxr/source/FWCore/Framework/interface/EventSetup.h
 {
  // list of RCT channels to mask
  edm::ESHandle<L1RCTChannelMask> channelMask;
@@ -114,9 +117,9 @@ void L1RCTSaveInputV2::updateFedVector(const edm::EventSetup& eventSetup, bool g
 
 }
 
-void
-L1RCTSaveInputV2::analyze(const edm::Event& event,
-                        const edm::EventSetup& eventSetup)
+ void
+L1RCTCreateInput::analyze(const edm::Event& event,
+  const edm::EventSetup& eventSetup)
 {
  using namespace edm;
 
@@ -158,8 +161,25 @@ L1RCTSaveInputV2::analyze(const edm::Event& event,
  {
   for(unsigned short iCrate = 0; iCrate < 18; iCrate++)
   {
+
+   bool selectCrate=false;
+   if (crateNumber.size()==1 && crateNumber[0]==-1) selectCrate=true;
+   else { for(unsigned int i=0; i<crateNumber.size(); i++){
+    if(iCrate==crateNumber[i]) selectCrate=true;
+   }
+
+   }
+
    for(unsigned short iCard = 0; iCard < 7; iCard++)
    {
+
+    bool selectCard=false;
+    if (cardNumber.size()==1 && cardNumber[0]==-1) selectCard=true;
+    else { for(unsigned int i=0; i<cardNumber.size(); i++){
+     if(iCard==cardNumber[i]) selectCard=true;
+    }
+    }
+
     // tower numbered from 0-31
     for(unsigned short iTower = 0; iTower < 32; iTower++)
     {
@@ -168,6 +188,8 @@ L1RCTSaveInputV2::analyze(const edm::Event& event,
      unsigned short fgbit = rct->ecalFineGrainBit(iCrate, iCard, iTower);
      unsigned short mubit = rct->hcalFineGrainBit(iCrate, iCard, iTower);
      unsigned long lutOutput = rctLookupTables->lookup(ecal, hcal, fgbit, iCrate, iCard, iTower);
+
+     if(selectCard&&selectCrate)
      ofs
       << std::hex 
       << nEvents << "\t"
@@ -179,62 +201,101 @@ L1RCTSaveInputV2::analyze(const edm::Event& event,
       << lutOutput
       << std::dec
       << std::endl;
-
-//      if(ecal!=0 || hcal!=0) 
-//      if(iTower<4 || iTower > 28) 
-
-/*      cout
+      else
+     ofs
       << std::hex
       << nEvents << "\t"
       << iCrate << "\t"
       << iCard << "\t"
       << iTower << "\t"
-      << ecal * 2 + fgbit << "\t"
-      << hcal * 2 + mubit << "\t"
-      << lutOutput
+      << "0"<<"\t"
+      << "0"<<"\t"
+      << "0"<<"\t"
       << std::dec
       << std::endl;
-*/
+
+     //      if(ecal!=0 || hcal!=0) 
+     //      if(iTower<4 || iTower > 28) 
+
+     /*      cout
+             << std::hex
+             << nEvents << "\t"
+             << iCrate << "\t"
+             << iCard << "\t"
+             << iTower << "\t"
+             << ecal * 2 + fgbit << "\t"
+             << hcal * 2 + mubit << "\t"
+             << lutOutput
+             << std::dec
+             << std::endl;
+             */
     }
    }
   }
-      for (int i = 0; i < 18; i++) //Crate
-        {
-          for (int j = 0; j < 8; j++) //HF "tower"
-            {
-              unsigned short hf = rct->hfCompressedET(i,j);
-              unsigned short hfFG = rct->hfFineGrainBit(i,j);
-              unsigned long lutOutput = rctLookupTables->lookup(hf,i,999,j);
-              ofs
-                << std::hex
-                << nEvents << "\t"
-                << i << "\t"
-                << "999" << "\t"
-                << j << "\t"
-                << "0" << "\t"
-                << hf*2+hfFG<< "\t"
-                << lutOutput // << "Wha happen'd"
-                << std::dec
-                << std::endl;
 
-/*              cout
-                << std::hex
-                << nEvents << "\t"
-                << i << "\t"
-                << "999" << "\t"
-                << j << "\t"
-                << "0" << "\t"
-                << hf*2+hfFG<< "\t"
-                << lutOutput // << "Wha happen'd"
-                << std::dec
-                << std::endl;
-*/
 
-            }
-        }
- }
- nEvents++;
+   for (int i = 0; i < 18; i++) //Crate
+   {
+
+    bool selectCrate=false;
+    if (crateNumber.size()==1 && crateNumber[0]==-1) selectCrate=true;
+    else { for(unsigned int crate=0; crate<crateNumber.size(); crate++){
+     if(i==crateNumber[crate]) selectCrate=true;
+    }
+    }
+
+    for (int j = 0; j < 8; j++) //HF "tower"
+    {
+     unsigned short hf = rct->hfCompressedET(i,j);
+     unsigned short hfFG = rct->hfFineGrainBit(i,j);
+     unsigned long lutOutput = rctLookupTables->lookup(hf,i,999,j);
+
+     if(includeHF&&selectCrate)
+     ofs
+      << std::hex
+      << nEvents << "\t"
+      << i << "\t"
+      << "999" << "\t"
+      << j << "\t"
+      << "0" << "\t"
+      << hf*2+hfFG<< "\t"
+      << lutOutput // << "Wha happen'd"
+      << std::dec
+      << std::endl;
+      else
+     ofs
+      << std::hex
+      << nEvents << "\t"
+      << i << "\t"
+      << "999" << "\t"
+      << j << "\t"
+      << "0" << "\t"
+      << "0" << "\t"
+      << "0" << "\t"
+      << std::dec
+      << std::endl;
+
+
+
+     /*              cout
+                     << std::hex
+                     << nEvents << "\t"
+                     << i << "\t"
+                     << "999" << "\t"
+                     << j << "\t"
+                     << "0" << "\t"
+                     << hf*2+hfFG<< "\t"
+                     << lutOutput // << "Wha happen'd"
+                     << std::dec
+                     << std::endl;
+                     */
+
+    }
+   }
+   }
+
+  nEvents++;
 }
 #include "FWCore/Framework/interface/MakerMacros.h"
-DEFINE_FWK_MODULE(L1RCTSaveInputV2);
+DEFINE_FWK_MODULE(L1RCTCreateInput);
 

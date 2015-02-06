@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
-// Package:    L1RCTSaveInputV2
-// Class:      L1RCTSaveInputV2
+// Package:    L1RCTCreateInput
+// Class:      L1RCTCreateInput
 //
-/**\class L1RCTSaveInputV2 L1RCTSaveInputV2.cc src/L1RCTSaveInputV2/src/L1RCTSaveInputV2.cc
+/**\class L1RCTCreateInput L1RCTCreateInput.cc src/L1RCTCreateInput/src/L1RCTCreateInput.cc
 
  Description: Saves the input event from TPGs for loading 
               simulated events in hardware
@@ -35,10 +35,10 @@
 class L1RCTLookupTables;
 class L1RCT;
 
-class L1RCTSaveInputV2 : public edm::EDAnalyzer {
+class L1RCTCreateInput : public edm::EDAnalyzer {
 public:
-  explicit L1RCTSaveInputV2(const edm::ParameterSet&);
-  ~L1RCTSaveInputV2();
+  explicit L1RCTCreateInput(const edm::ParameterSet&);
+  ~L1RCTCreateInput();
   virtual void analyze(const edm::Event&, const edm::EventSetup&);
   void updateFedVector(const edm::EventSetup& eventSetup, bool getFromOmds, int runNumber);
   void updateConfiguration(const edm::EventSetup& eventSetup);
@@ -53,4 +53,7 @@ private:
   edm::InputTag hcalDigisLabel;
   bool useDebugTpgScales;
   std::ofstream ofs;
+  std::vector<int> crateNumber;
+  std::vector<int> cardNumber;
+  bool includeHF;
 };

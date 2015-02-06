@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
-// Package:    L1RCTTestAnalyzerV2
-// Class:      L1RCTTestAnalyzerV2
+// Package:    L1RCTAnalyzer
+// Class:      L1RCTAnalyzer
 //
-/**\class L1RCTTestAnalyzerV2 L1RCTTestAnalyzerV2.cc src/L1RCTTestAnalyzerV2/src/L1RCTTestAnalyzerV2.cc
+/**\class L1RCTAnalyzer L1RCTAnalyzer.cc src/L1RCTAnalyzer/src/L1RCTAnalyzer.cc
 
  Description: <one line class summary>
 
@@ -13,7 +13,7 @@
 //
 // Original Author:  pts/47
 //         Created:  Thu Jul 13 21:38:08 CEST 2006
-// $Id: L1RCTTestAnalyzerV2.h,v 1.1 2009/02/12 13:24:44 grogg Exp $
+// $Id: L1RCTAnalyzer.h,v 1.1 2009/02/12 13:24:44 grogg Exp $
 //
 //
 
@@ -45,10 +45,10 @@
 // class declaration
 //
 
-class L1RCTTestAnalyzerV2 : public edm::EDAnalyzer {
+class L1RCTAnalyzer : public edm::EDAnalyzer {
 public:
-  explicit L1RCTTestAnalyzerV2(const edm::ParameterSet&);
-  ~L1RCTTestAnalyzerV2();
+  explicit L1RCTAnalyzer(const edm::ParameterSet&);
+  ~L1RCTAnalyzer();
   
   
   virtual void analyze(const edm::Event&, const edm::EventSetup&);
@@ -64,31 +64,9 @@ private:
   edm::InputTag rctDigisLabel;
   std::ofstream ofs;
   std::string fileName;
-//   TH1F * h_emRank;
-//   TH1F * h_emRankOutOfTime;
-//   TH1F * h_emIeta;
-//   TH1F * h_emIphi;
-//   TH1F * h_emIso;
-//   TH2F * h_emRankInIetaIphi;
-//   // add isolated/non-iso?
-//   TH2F * h_emIsoInIetaIphi;
-//   TH2F * h_emNonIsoInIetaIphi;
-//   TH1F * h_emCandTimeSample;
-
-//   TH1F * h_regionSum;
-//   TH1F * h_regionIeta;
-//   TH1F * h_regionIphi;
-//   TH1F * h_regionMip;
-//   TH2F * h_regionSumInIetaIphi;
-//   // add bits in ieta/iphi?  tau, overflow, mip, quiet, finegrain? 
-//   // (is fine grain same thing as mip??)
-//   TH2F * h_regionFGInIetaIphi;
-
-//   TH1F * h_towerMip;
-
-//   TH1F * h_ecalTimeSample;
-//   TH1F * h_hcalTimeSample;
-
+  std::vector<int> crateNumber;
+  std::vector<int> cardNumber;
+  bool includeHF;
 };
 
 //

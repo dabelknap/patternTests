@@ -182,7 +182,7 @@ L1RCTPatternProducer::produce(edm::Event& event,
   for(unsigned short iCrate = 0; iCrate < 18; iCrate++){
    for(unsigned short iCard = 0; iCard < 7; iCard++){    
     //  unsigned short ecal, fgbit, hcal, mubit;  
-    int tt = (nEvents%3)*2;
+    ////int tt = (nEvents%3)*2;
     //int s = 0;
 
     fgbit =0;
