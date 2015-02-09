@@ -156,5 +156,18 @@ process.TFileService = cms.Service(
 process.runpath = cms.Path(process.L1TRerunHCALTP_FromRAW*process.ecalDigis*process.simRctDigis*process.rctSaveInput*process.filteredSimRctDigis*process.L1RCTTestAnalyzer)#
 process.outpath = cms.EndPath(process.output)
 
+process.RCTConfigProducers.eGammaLSB = 1
+process.RCTConfigProducers.jetMETLSB = 1
+process.l1CaloScales.L1CaloEmEtScaleLSB = 1
+process.l1CaloScales.L1CaloRegionEtScaleLSB = 1
+process.RCTConfigProducers.eGammaECalScaleFactors = [1., 1., 1., 1., 1., 1., 1., 1.,1., 1., 1., 1.,1., 1., 1., 1.,1., 1., 1., 1.,1., 1., 1., 1.,1., 1., 1., 1.,1., 1., 1., 1. ]
+process.RCTConfigProducers.jetMETECalScaleFactors = [1., 1., 1., 1., 1., 1., 1., 1.,1., 1., 1., 1.,1., 1., 1., 1.,1., 1., 1., 1.,1., 1., 1., 1.,1., 1., 1., 1.,1., 1., 1., 1. ]
+
+process.RCTConfigProducers.eActivityCut= 0.0
+process.RCTConfigProducers.hActivityCut= 0.0
+process.RCTConfigProducers.eMaxForFGCut= 1024.0
+process.RCTConfigProducers.hOeCut= 1024.0
+
+
 
 
